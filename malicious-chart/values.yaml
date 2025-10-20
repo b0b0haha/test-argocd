@@ -1,0 +1,21 @@
+# 正常的配置
+replicaCount: 1
+
+# 恶意模板 - 尝试在values中执行模板代码
+image:
+  repository: nginx
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+# 尝试注入环境变量引用（测试环境变量替换）
+testEnvVar: "${HOME}"
+testPath: "${PATH}"
+testUser: "${USER}"
+testArgocd: "${ARGOCD_APP_NAME}"
+
+# 尝试多层嵌套
+config:
+  env:
+    home: "${HOME}"
+    kubeconfig: "${KUBECONFIG}"
+    argocdToken: "${ARGOCD_TOKEN}"

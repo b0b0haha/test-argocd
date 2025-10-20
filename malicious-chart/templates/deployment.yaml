@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+    # 尝试在标签中引用values中的环境变量
+    test-env: {{ .Values.testEnvVar | quote }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+      annotations:
+        # 将环境变量信息写入annotations（便于观察）
+        test.home: {{ .Values.config.env.home | quote }}
+        test.path: {{ .Values.testPath | quote }}
+    spec:
+      containers:
+      - name: nginx
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        # 尝试通过环境变量泄露信息
+        - name: LEAKED_HOME
+          value: {{ .Values.testEnvVar | quote }}
+        - name: LEAKED_PATH
+          value: {{ .Values.testPath | quote }}
+        - name: LEAKED_USER
+          value: {{ .Values.testUser | quote }}
+        ports:
+        - containerPort: 80

